@@ -22,6 +22,11 @@ class AnalyticsRecord {
         return $this;
     }
 
+    public function getDate() : string
+    {
+        return $this->date;
+    }
+
     private function setFormattedDate($rawData, $format = '')
     {
         $this->date = $this->format($rawData[0], $format);
@@ -34,10 +39,20 @@ class AnalyticsRecord {
         return $this;
     }
 
+    public function getCity() : string
+    {
+        return $this->city;
+    }
+
     private function setDeviceCategory($rawData)
     {
         $this->deviceCategory = $rawData[2];
         return $this;
+    }
+
+    public function getDeviceCategory() : string
+    {
+        return $this->deviceCategory;
     }
 
     public function format($date, $format = 'Y-m-d')
@@ -45,7 +60,7 @@ class AnalyticsRecord {
         return Carbon::parse($date)->format($format);
     }
 
-    public function toArray()
+    public function toArray() : array
     {
         return [
             'city' => $this->city,

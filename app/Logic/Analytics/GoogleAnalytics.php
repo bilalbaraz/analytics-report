@@ -10,7 +10,7 @@ class GoogleAnalytics implements AnalyticsInterface
 {
     private $data = [];
 
-    public function retrieve()
+    public function retrieve($options = [])
     {
         $analyticsData = AnalyticsFacade::performQuery(
             Period::years(1),
