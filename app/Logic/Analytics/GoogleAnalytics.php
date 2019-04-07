@@ -84,27 +84,34 @@ class GoogleAnalytics implements AnalyticsInterface
 
         // It saves records
         $collection->map(function ($item) use ($cityRows, $deviceCategoryRows) {
-            $recordCity = $item['city'];
-            $recordDeviceCategory = $item['deviceCategory'];
-
-            $record = [];
-
-            $city = $cityRows->first(function($value, $key) use ($recordCity) {
-                return $value->city_name == $recordCity;
-            });
-
-            $deviceCategory = $deviceCategoryRows->first(function($value, $key) use ($recordDeviceCategory) {
-                return $value->device_category_name == $recordDeviceCategory;
-            });
-
-            $record['city_id'] = $city->id;
-            $record['device_category_id'] = $deviceCategory->id;
-            $record['visit_date'] = $item['date'];
-            $record['session'] = $item['sessionCount'];
-            $record['visitor'] = $item['visit'];
-            $record['pageview'] = $item['pageView'];
-
+            $record = $this->prepareRecord($item, $cityRows, $deviceCategoryRows);
             Record::firstOrCreate($record);
         });
+    }
+
+
+    public function prepareRecord($item, $cityRows, $deviceCategoryRows) : array
+    {
+        $recordCity = $item['city'];
+        $recordDeviceCategory = $item['deviceCategory'];
+
+        $record = [];
+
+        $city = $cityRows->first(function($value, $key) use ($recordCity) {
+            return $value->city_name == $recordCity;
+        });
+
+        $deviceCategory = $deviceCategoryRows->first(function($value, $key) use ($recordDeviceCategory) {
+            return $value->device_category_name == $recordDeviceCategory;
+        });
+
+        $record['city_id'] = $city->id;
+        $record['device_category_id'] = $deviceCategory->id;
+        $record['visit_date'] = $item['date'];
+        $record['session'] = $item['sessionCount'];
+        $record['visitor'] = $item['visit'];
+        $record['pageview'] = $item['pageView'];
+
+        return $record;
     }
 }
