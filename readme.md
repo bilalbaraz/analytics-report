@@ -34,4 +34,4 @@ All done!
 
 ## Authors
 
-* **Bilal Baraz** - [PurpleBooth](https://github.com/bilalbaraz)
+* **Bilal Baraz** - [GitHub Account](https://github.com/bilalbaraz)
