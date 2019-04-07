@@ -97,7 +97,7 @@ class HomeController extends Controller
             $record['visitor'] = $item['visit'];
             $record['pageview'] = $item['pageView'];
 
-            Record::create($record);
+            Record::firstOrCreate($record);
         });
     }
 }

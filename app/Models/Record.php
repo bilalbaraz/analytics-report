@@ -14,4 +14,14 @@ class Record extends Model
         'visitor',
         'session'
     ];
+
+    public function city()
+    {
+        return $this->belongsTo(City::class);
+    }
+
+    public function deviceCategory()
+    {
+        return $this->belongsTo(DeviceCategory::class);
+    }
 }
