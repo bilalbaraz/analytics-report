@@ -15,7 +15,7 @@ class Analyzer {
         $this->instance = $this->driverWithNamespace();
     }
 
-    private function driverWithNamespace()
+    private function driverWithNamespace($options = [])
     {
         $fullPath = 'App\\Logic\\Analytics\\' . $this->driver . 'Analytics';
         return new $fullPath();

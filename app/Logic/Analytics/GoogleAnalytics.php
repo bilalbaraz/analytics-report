@@ -9,15 +9,27 @@ use Spatie\Analytics\Period;
 class GoogleAnalytics implements AnalyticsInterface
 {
     private $data = [];
+    private $options = [];
 
-    public function retrieve($options = [])
+    public function setOptions($options = [])
+    {
+        $this->options = $options;
+        return $this;
+    }
+
+    public function getOptions()
+    {
+        return $this->options;
+    }
+
+    public function retrieve()
     {
         $analyticsData = AnalyticsFacade::performQuery(
             Period::years(1),
             'ga:sessions',
             [
-                'metrics' => 'ga:sessions, ga:pageviews',
-                'dimensions' => 'ga:dateHourMinute, ga:city, ga:deviceCategory, ga:sessionCount'
+                'metrics' => $this->options['metrics'],
+                'dimensions' => $this->options['dimensions']
             ]
         );
 

@@ -6,7 +6,9 @@ use App\Logic\Analytics\Analyzer;
 use App\Logic\ValueObjects\AnalyticsRecord;
 use App\Models\City;
 use App\Models\DeviceCategory;
+use App\Models\Record;
 use Carbon\Carbon;
+use function foo\func;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -36,6 +38,10 @@ class HomeController extends Controller
         $analyzer = new Analyzer();
         $analytics = $analyzer
             ->getInstance()
+            ->setOptions([
+                'metrics' => 'ga:sessions, ga:pageviews',
+                'dimensions' => 'ga:dateHourMinute, ga:city, ga:deviceCategory, ga:sessionCount'
+            ])
             ->retrieve()
             ->getData();
 
@@ -44,7 +50,6 @@ class HomeController extends Controller
 
         // List of incoming data from remote source row by row
         foreach ($analytics as $row) {
-            dump($row);
             // Define a value object and manage it over that class
             $record = new AnalyticsRecord($row);
             $recordArray = $record->toArray();
@@ -59,22 +64,40 @@ class HomeController extends Controller
 
         // Before saving analytics data, it saves device categories
         foreach ($deviceCategories as $deviceCategory) {
-            $itemExists = DeviceCategory::where(['device_category_name' => $deviceCategory])->count();
-            if ($itemExists == 0) {
-                DeviceCategory::create([
-                    'device_category_name' => $deviceCategory
-                ]);
-            }
+            DeviceCategory::firstOrCreate(['device_category_name' => $deviceCategory]);
         }
 
         // Before saving analytics data, it saves cities
         foreach ($cities as $city) {
-            $itemExists = City::where(['city_name' => $city])->count();
-            if ($itemExists == 0) {
-                City::create([
-                    'city_name' => $city
-                ]);
-            }
+            City::firstOrCreate(['city_name' => $city]);
         }
+
+        $cityRows = City::all();
+        $deviceCategoryRows = DeviceCategory::all();
+
+        // It saves records
+        $collection->map(function ($item) use ($cityRows, $deviceCategoryRows) {
+            $recordCity = $item['city'];
+            $recordDeviceCategory = $item['deviceCategory'];
+
+            $record = [];
+
+            $city = $cityRows->first(function($value, $key) use ($recordCity) {
+                return $value->city_name == $recordCity;
+            });
+
+            $deviceCategory = $deviceCategoryRows->first(function($value, $key) use ($recordDeviceCategory) {
+                return $value->device_category_name == $recordDeviceCategory;
+            });
+
+            $record['city_id'] = $city->id;
+            $record['device_category_id'] = $deviceCategory->id;
+            $record['visit_date'] = $item['date'];
+            $record['session'] = $item['sessionCount'];
+            $record['visitor'] = $item['visit'];
+            $record['pageview'] = $item['pageView'];
+
+            Record::create($record);
+        });
     }
 }

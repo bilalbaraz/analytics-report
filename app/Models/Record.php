@@ -7,8 +7,9 @@ use Illuminate\Database\Eloquent\Model;
 class Record extends Model
 {
     protected $fillable = [
-        'device_category_name',
+        'device_category_id',
         'city_id',
+        'visit_date',
         'pageview',
         'visitor',
         'session'
