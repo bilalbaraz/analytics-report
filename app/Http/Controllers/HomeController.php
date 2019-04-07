@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Logic\Analytics\Analyzer;
+use App\Models\Record;
 use Illuminate\Http\Request;
 
 class HomeController extends Controller
@@ -24,7 +25,12 @@ class HomeController extends Controller
      */
     public function index(Request $request)
     {
-        return view('home');
+        $records = Record::with([
+            'city',
+            'deviceCategory'
+        ])->paginate(10);
+
+        return view('home', compact('records'));
     }
 
     public function collect(Request $request)
