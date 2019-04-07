@@ -24,6 +24,8 @@ Run migrations
 php artisan migrate
 ```
 
+Before collecting data, should update Google Analytics credentials on .env file and put Analytics API JSON file under storage/app/analytics or any directory where you want. After putting the file, please update config/analytics.php.
+
 All done!
 
 ## Built With
